@@ -1,5 +1,5 @@
 *** Settings ***
-Resource    ../keywords/login.resource
+Resource    ../keywords/login_keywords.resource
 
 
 Test Setup    Criar Sessão
@@ -11,7 +11,7 @@ TC01 - Realizar Login com Sucesso Usuário Admin True
     Verificar se o login foi realizado com sucesso
 
 TC02 - Realizar Login com Sucesso Usuário Admin False
-    Realizar o login e capturar o token    ${EMAIL_USER}    ${PASSWORD_USER}    200
+    Realizar o login e capturar o token    ${EMAIL_USER_INITIAL}    ${PASSWORD_USER_INITIAL}    200
     Verificar se o login foi realizado com sucesso    
 
 TC03 - Realizar Login com e-mail inválido

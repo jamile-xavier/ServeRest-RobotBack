@@ -16,6 +16,7 @@ Teste API ServeRest
 ### Funcionalidades
 
 - [x] Realizar login;
+- [x] Cadastrar usuário;
 
 ### Tecnologias
 
