@@ -17,6 +17,10 @@ Teste API ServeRest
 
 - [x] Realizar login;
 - [x] Cadastrar usuário;
+- [x] Listar usuários cadastrados
+- [x] Buscar usuário por id
+- [x] Editar usuário por id
+- [x] Excluir usuário
 
 ### Tecnologias
 
