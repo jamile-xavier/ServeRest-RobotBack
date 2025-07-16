@@ -1,5 +1,6 @@
 *** Settings ***
 Resource    ../pages/usuarios_variables.resource
+Resource    ../pages/login_variables.resource
 
 Library    RequestsLibrary
 
@@ -25,17 +26,31 @@ Cadastrar usuário
     Set Test Variable    ${DATA}    ${response.json()}
 
 Verificar mensagem retornada 
-    [Arguments]    ${text_message}   
-    Dictionary Should Contain Item    ${DATA}    message    ${text_message}     
+    [Arguments]   ${message}     ${text_message}   
+    Dictionary Should Contain Item    ${DATA}    ${message}    ${text_message}     
 
 Verificar se contém o id na resposta
     Dictionary Should Contain Key    ${DATA}    _id
 
 Listar todos os usuários cadastrados
-    [Arguments]    ${expected_status_code}
-    ${response}    GET On Session    alias=ServeRest    url=${USER}    expected_status=${expected_status_code}
+    [Arguments]    ${expected_status_code}=200    ${query_params}=None    &{headers}
 
+    # Se headers não foi passado, inicializa vazio
+    Run Keyword If    '${headers}' == ''    ${headers}=    Create Dictionary
+
+    ${base_url}=    Set Variable    ${BASE_URL}${USER}
+
+    IF    '${query_params}' != 'None'
+        ${final_url}=    Set Variable    ${base_url}?${query_params}
+    ELSE
+        ${final_url}=    Set Variable    ${base_url}
+    END
+
+    Log    URL Final utilizada: ${final_url}
+
+    ${response}=    GET On Session    alias=ServeRest    url=${final_url}    expected_status=${expected_status_code}    headers=${headers}
     Set Test Variable    ${DATA}    ${response.json()}
+
 
 Verificar os dados retornados da consulta de usuários
     Dictionary Should Contain Key    ${DATA}    quantidade
@@ -57,10 +72,10 @@ Validar campos do usuário
     END    
     
 Buscar usuário por id
-    [Arguments]    ${expected_status_code}
+    [Arguments]    ${expected_status_code}    ${id}
     ${response}    GET On Session    
     ...    alias=ServeRest 
-    ...    url=${USER}/${USER_ID}
+    ...    url=${USER}/${id}
     ...    expected_status=${expected_status_code}
 
     Set Test Variable    ${DATA}    ${response.json()}

@@ -25,7 +25,7 @@ TC01 - Cadastrar usuário admin true com sucesso
     ...    ${PASSWORD_ADMIN} 
     ...    true
     ...    201
-    Verificar mensagem retornada  Cadastro realizado com sucesso
+    Verificar mensagem retornada      message    Cadastro realizado com sucesso
     Verificar se contém o id na resposta  
   
 TC02 - Cadastrar usuário admin false com sucesso
@@ -44,7 +44,7 @@ TC02 - Cadastrar usuário admin false com sucesso
     ...    ${PASSWORD_USER} 
     ...    false
     ...    201
-    Verificar mensagem retornada  Cadastro realizado com sucesso
+    Verificar mensagem retornada    message    Cadastro realizado com sucesso
     Verificar se contém o id na resposta 
 
 TC03 - Listar usuários cadastrados com sucesso
@@ -55,7 +55,7 @@ TC03 - Listar usuários cadastrados com sucesso
 
 TC04 - Buscar usuário por id com sucesso
     Realizar o login e capturar o token   ${EMAIL_ADMIN}    ${PASSWORD_ADMIN}    200
-    Buscar usuário por id    200
+    Buscar usuário por id    200    ${USER_ID}
     Verificar os dados retornados da consulta de usuário por id
     
 TC05 - Editar e-mail do usuário por id com sucesso
@@ -68,12 +68,12 @@ TC05 - Editar e-mail do usuário por id com sucesso
     ...    ${PASSWORD_ADMIN} 
     ...    true    
     ...    200
-    Verificar mensagem retornada   Registro alterado com sucesso
+    Verificar mensagem retornada    message   Registro alterado com sucesso
 
 TC06 - Excluir usuário por id com sucesso
     Realizar o login e capturar o token   ${EMAIL_ADMIN}    ${PASSWORD_ADMIN}    200
     Excluir usuário por id    200
-    Verificar mensagem retornada    Registro excluído com sucesso 
+    Verificar mensagem retornada    message    Registro excluído com sucesso 
 
 TC07 - Listar usuários admin = true
     Listar usuários true ou false    200    true
@@ -96,15 +96,35 @@ TC09 - Cadastro de usuário com e-mail em duplicidade
     ...    ${PASSWORD_ADMIN} 
     ...    true
     ...    400
-    Verificar mensagem retornada  Este email já está sendo usado
+    Verificar mensagem retornada    message  Este email já está sendo usado
     
-#  TC10 - Listar usuários informando id inválido como query
-     
+TC10 - Listar usuários informando id inválido como query
+    Realizar o login e capturar o token   ${EMAIL_ADMIN}    ${PASSWORD_ADMIN}    200
+    Listar todos os usuários cadastrados    400    query_params=id=${INVALID_ID} 
+    Verificar mensagem retornada    id    id não é permitido
+    
+TC11 - Listar usuários informando e-mail inválido como query
+    Realizar o login e capturar o token   ${EMAIL_ADMIN}    ${PASSWORD_ADMIN}    200
+    Listar todos os usuários cadastrados    400    query_params=e-mail=${EMAIL_INVALID}
+    Verificar mensagem retornada    e-mail    e-mail não é permitido
 
-# TC11 - Listar usuários informando e-mail inválido como query
+TC12 - Listar usuários informando senha inválida como query
+    Realizar o login e capturar o token   ${EMAIL_ADMIN}    ${PASSWORD_ADMIN}    200
+    Listar todos os usuários cadastrados    400    query_params=senha=${PASSWORD_INVALID}
+    Verificar mensagem retornada    senha   senha não é permitido
 
-# TC12 - Listar usuários informando senha inválida como query
 
-# TC13 - BUscar usuários informando id inválido 
+TC13 - Buscar usuários informando id inválido    
+    Realizar o login e capturar o token   ${EMAIL_ADMIN}    ${PASSWORD_ADMIN}    200
+    Buscar usuário por id    400    ${INVALID_ID}
+    Verificar mensagem retornada    message   Usuário não encontrado
 
-# TC14 - Atualizar usuário por id informando e-mail em duplicidade
+TC14 - Atualizar usuário por id informando e-mail em duplicidade
+    Realizar o login e capturar o token   ${EMAIL_ADMIN}    ${PASSWORD_ADMIN}    200
+    Editar e-mail do usuário
+    ...    ${NAME_ADMIN} 
+    ...    ${MAIL_DUPLICATE}
+    ...    ${PASSWORD_ADMIN} 
+    ...    true    
+    ...    400
+    Verificar mensagem retornada    message   Este email já está sendo usado
