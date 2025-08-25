@@ -1,8 +1,8 @@
 *** Settings ***
-Resource    ../keywords/login_keywords.resource
-Resource    ../pages/login_variables.resource
-Resource    ../keywords/usuarios_keywords.resource
-Resource    ../pages/usuarios_variables.resource
+Resource    ../keywords/01-login_keywords.resource
+Resource    ../pages/01-login_variables.resource
+Resource    ../keywords/02-usuarios_keywords.resource
+Resource    ../pages/02-usuarios_variables.resource
 
 Library    ../../library/faker_api.py
 
@@ -92,7 +92,7 @@ TC09 - Cadastro de usuário com e-mail em duplicidade
     Realizar o login e capturar o token   ${EMAIL_MASTER}    ${PASSWORD_MASTER}    200
     Cadastrar usuário    
     ...    ${NAME_ADMIN} 
-    ...    ${EMAIL_DUPLICATE} 
+    ...    ${MAIL_DUPLICATE} 
     ...    ${PASSWORD_ADMIN} 
     ...    true
     ...    400

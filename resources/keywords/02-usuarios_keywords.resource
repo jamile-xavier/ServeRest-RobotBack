@@ -1,6 +1,6 @@
 *** Settings ***
-Resource    ../pages/usuarios_variables.resource
-Resource    ../pages/login_variables.resource
+Resource    ../pages/02-usuarios_variables.resource
+Resource    ../pages/01-login_variables.resource
 
 Library    RequestsLibrary
 
@@ -19,13 +19,22 @@ Cadastrar usuário
     ...    url=${USER}
     ...    json=${body}
     ...    expected_status=${expected_status_code}
-    IF    ${expected_status_code} == 201
-        Set Global Variable    ${USER_ID}    ${response.json()["_id"]}
-    END
 
-    Set Test Variable    ${DATA}    ${response.json()}
+   IF    ${expected_status_code} == 201
+    Set Global Variable    ${USER_ID}    ${response.json()["_id"]}
+    Set Global Variable    ${USER_EMAIL}    ${email}
+    Set Global Variable    ${USER_PASSWORD}    ${password}
+
+    IF    '${admin}' == 'true'
+        Set Global Variable    ${ADMIN_EMAIL}    ${email}
+        Set Global Variable    ${ADMIN_PASSWORD}    ${password}
+    END
+    END
+    
+     Set Test Variable    ${DATA}    ${response.json()}
 
 Verificar mensagem retornada 
+    [Documentation]    Verificar mensagem de retorno
     [Arguments]   ${message}     ${text_message}   
     Dictionary Should Contain Item    ${DATA}    ${message}    ${text_message}     
 
@@ -33,6 +42,7 @@ Verificar se contém o id na resposta
     Dictionary Should Contain Key    ${DATA}    _id
 
 Listar todos os usuários cadastrados
+    [Documentation]    Listar todos os usuários cadastrados
     [Arguments]    ${expected_status_code}=200    ${query_params}=None    &{headers}
 
     # Se headers não foi passado, inicializa vazio
@@ -53,6 +63,7 @@ Listar todos os usuários cadastrados
 
 
 Verificar os dados retornados da consulta de usuários
+    [Documentation]    Verificar dados retornados ao pesquisar usuários
     Dictionary Should Contain Key    ${DATA}    quantidade
     Dictionary Should Contain Key    ${DATA}    usuarios
     ${length}    Get Length    ${DATA["usuarios"]}
@@ -65,6 +76,7 @@ Verificar os dados retornados da consulta de usuários
     # Dictionary Should Contain Key    ${usuario}    _id  
     # END
 Validar campos do usuário
+    [Documentation]    Validação dos campos retornados do usuário
     FOR    ${usuario}    IN    @{DATA["usuarios"]}
         FOR    ${chave}    IN    nome    email    password    administrador    _id
             Dictionary Should Contain Key    ${usuario}    ${chave}
@@ -72,6 +84,7 @@ Validar campos do usuário
     END    
     
 Buscar usuário por id
+    [Documentation]    Busca usuário por id
     [Arguments]    ${expected_status_code}    ${id}
     ${response}    GET On Session    
     ...    alias=ServeRest 
@@ -81,6 +94,7 @@ Buscar usuário por id
     Set Test Variable    ${DATA}    ${response.json()}
 
 Verificar os dados retornados da consulta de usuário por id
+    [Documentation]    Verificar os dados retornados ao consultar um usuário por id
     ${length}    Get Length    ${DATA}
     Should Be True    ${length} > 0
     Dictionary Should Contain Key    ${DATA}    nome
@@ -90,6 +104,7 @@ Verificar os dados retornados da consulta de usuário por id
     Dictionary Should Contain Key    ${DATA}    _id  
 
 Editar e-mail do usuário
+    [Documentation]    Edição de e-mail
     [Arguments]    ${name}    ${email_update}  ${password}    ${admin}   ${expected_status_code}               
     ${body}    Create Dictionary   
     ...    nome=${name} 
@@ -105,6 +120,7 @@ Editar e-mail do usuário
     Set Test Variable    ${DATA}    ${response.json()}
 
 Excluir usuário por id
+    [Documentation]    Exclusão do usuário pelo seu id
     [Arguments]    ${expected_status_code}    
     ${response}    DELETE On Session    
     ...    alias=ServeRest    
@@ -114,6 +130,7 @@ Excluir usuário por id
     Set Test Variable    ${DATA}    ${response.json()}
 
  Listar usuários true ou false
+    [Documentation]     Busca de usuário admin true e false
     [Arguments]    ${expected_status_code}    ${is_admin}
     &{params}=    Create Dictionary    administrador    ${is_admin}
     ${response}=    GET On Session
@@ -124,7 +141,8 @@ Excluir usuário por id
     Set Test Variable    ${DATA}    ${response.json()}
 
 Verificar o valor do campo administrador
-   [Arguments]    ${esperado}
+    [Documentation]    Verifica o valor do campo administrador
+    [Arguments]    ${esperado}
     FOR    ${usuario}    IN    @{DATA["usuarios"]}
        Should Be Equal    ${usuario["administrador"]}    ${esperado}
     END

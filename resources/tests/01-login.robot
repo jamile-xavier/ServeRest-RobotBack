@@ -1,5 +1,5 @@
 *** Settings ***
-Resource    ../keywords/login_keywords.resource
+Resource    ../keywords/01-login_keywords.resource
 
 
 Test Setup    Criar Sessão

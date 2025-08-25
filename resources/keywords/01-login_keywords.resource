@@ -1,6 +1,6 @@
 *** Settings ***
 
-Resource    ../pages/login_variables.resource
+Resource    ../pages/01-login_variables.resource
 
 Library    RequestsLibrary
 Library    Collections
@@ -24,7 +24,7 @@ Realizar o login e capturar o token
     ...    json=${body}
     ...    expected_status=${expected_status_code}
     IF    ${expected_status_code} == 200
-        Set Test Variable    ${TOKEN}    ${response.json()["authorization"]}
+        Set Global Variable    ${TOKEN}    ${response.json()["authorization"]}
     END    
     
     Set Test Variable    ${DATA}    ${response.json()}
@@ -35,5 +35,6 @@ Verificar se o login foi realizado com sucesso
     Dictionary Should Contain Item    ${DATA}       authorization    ${TOKEN}
 
 Verificar mensagem de erro ao ocorrer falha no login
+    [Documentation]    Verificar mensagens de erro
     [Arguments]   ${key}     ${msg_error}
      Dictionary Should Contain Item       ${DATA}    ${key}    ${msg_error}

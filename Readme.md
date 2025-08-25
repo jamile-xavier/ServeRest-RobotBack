@@ -1,5 +1,5 @@
 <h1 align="Center"> Teste de Automação API Com Robot Framework - ServeRest </h1>
-
+[![Badge ServeRest](https://img.shields.io/badge/API-ServeRest-green)](https://github.com/ServeRest/ServeRest/)
 <h2 align="center">
 Teste API ServeRest
 </h2>
