@@ -3,6 +3,10 @@ Resource    ../keywords/01-login_keywords.resource
 Resource    ../pages/01-login_variables.resource
 Resource    ../keywords/02-usuarios_keywords.resource
 Resource    ../pages/02-usuarios_variables.resource
+Resource    ../keywords/03-produtos.resource
+Resource    ../pages/03-produtos.resource
+Resource    ../keywords/04-carrinho.resource
+Resource    ../pages/04-carrinho.resource
 
 Library    ../../library/faker_api.py
 
@@ -128,3 +132,25 @@ TC14 - Atualizar usuário por id informando e-mail em duplicidade
     ...    true    
     ...    400
     Verificar mensagem retornada    message   Este email já está sendo usado
+
+TC15 - Excluir usuário que possui carrinho cadastrado
+    Realizar o login e capturar o token   ${EMAIL_ADMIN}    ${PASSWORD_ADMIN}    200
+    ${NAME_ADMIN}      Get Name
+    ${EMAIL_ADMIN}     Get Email
+    ${PASSWORD_ADMIN}  Get Password
+    Cadastrar usuário    
+    ...    ${NAME_ADMIN} 
+    ...    ${EMAIL_ADMIN} 
+    ...    ${PASSWORD_ADMIN} 
+    ...    true
+    ...    201
+    Realizar o login e capturar o token   ${EMAIL_ADMIN}    ${PASSWORD_ADMIN}    200
+    ${PRODUCT_NAME}    Get Product Name
+    ${PRODUCT_PRICE}    Get Product Price
+    ${PRODUCT_DESCRIPTION}    Get Product Description
+    ${PRODUCT_QUANTITY}    Get Product Quantity
+
+    Cadastrar produto    ${PRODUCT_NAME}    ${PRODUCT_PRICE}    ${PRODUCT_DESCRIPTION}    ${PRODUCT_QUANTITY}    ${TOKEN}     201
+    Adicionar Produtos no Carrinho    ${PRODUCT_ID}    2    ${TOKEN}    201
+    Excluir usuário por id   400
+    Verificar mensagem retornada    message    Não é permitido excluir usuário com carrinho cadastrado

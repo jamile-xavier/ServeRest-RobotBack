@@ -4,6 +4,8 @@ Resource    ../keywords/01-login_keywords.resource
 Resource    ../keywords/02-usuarios_keywords.resource
 Resource    ../pages/03-produtos.resource 
 Resource    ../keywords/03-produtos.resource
+Resource    ../keywords/04-carrinho.resource
+Resource    ../pages/04-carrinho.resource
 
 Library    ../../library/faker_api.py
 
@@ -190,3 +192,15 @@ TC14 - Excluir produto com usuário admin false
     Realizar o login e capturar o token   ${EMAIL_USER}    ${PASSWORD_USER}    200
     Excluir produto por id    ${TOKEN}    403
     Verificar mensagem retornada    message    Rota exclusiva para administradores
+
+TC15 - Excluir um produto que faz parte de um carrinho
+    Realizar o login e capturar o token   ${EMAIL_ADMIN}    ${PASSWORD_ADMIN}    200
+    ${PRODUCT_NAME}    Get Product Name
+    ${PRODUCT_PRICE}    Get Product Price
+    ${PRODUCT_DESCRIPTION}    Get Product Description
+    ${PRODUCT_QUANTITY}    Get Product Quantity
+
+    Cadastrar produto    ${PRODUCT_NAME}    ${PRODUCT_PRICE}    ${PRODUCT_DESCRIPTION}    ${PRODUCT_QUANTITY}    ${TOKEN}     201
+    Adicionar Produtos no Carrinho    ${PRODUCT_ID}    2    ${TOKEN}    201
+    Excluir produto por id    ${TOKEN}    400
+    Verificar mensagem retornada    message    Não é permitido excluir produto que faz parte de carrinho

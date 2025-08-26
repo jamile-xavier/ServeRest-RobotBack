@@ -49,7 +49,80 @@ TC03 - Buscar carrinho por id com sucesso
     Buscar carrinho por id    ${CART_ID}    200
     Verificar os dados retornados da consulta de carrinho por id
 
-# TC04 - Finalizar compra com sucesso
+TC04 - Finalizar compra com sucesso
+    Realizar o login e capturar o token   ${EMAIL_ADMIN}    ${PASSWORD_ADMIN}    200
+    Excluir carrinho ao concluir compra    ${TOKEN}    200
+    Verificar mensagem retornada    message    Registro excluído com sucesso
 
-# TC05 - Cancelar compra e retornar produtos para o estoque
+TC05 - Cancelar compra e retornar produtos para o estoque
+    Realizar o login e capturar o token   ${EMAIL_ADMIN}    ${PASSWORD_ADMIN}    200
+    ${PRODUCT_NAME}    Get Product Name
+    ${PRODUCT_PRICE}    Get Product Price
+    ${PRODUCT_DESCRIPTION}    Get Product Description
+    ${PRODUCT_QUANTITY}    Get Product Quantity
 
+    Cadastrar produto    ${PRODUCT_NAME}    ${PRODUCT_PRICE}    ${PRODUCT_DESCRIPTION}    ${PRODUCT_QUANTITY}    ${TOKEN}     201
+    Adicionar Produtos no Carrinho    ${PRODUCT_ID}    2    ${TOKEN}    201
+    Excluir carrinho ao cancelar compra    ${TOKEN}    200
+    Verificar mensagem retornada    message    Registro excluído com sucesso. Estoque dos produtos reabastecido
+
+TC06 - Cadastrar carrinho com produto com id inválido
+    Realizar o login e capturar o token   ${EMAIL_ADMIN}    ${PASSWORD_ADMIN}    200
+    Adicionar Produtos no Carrinho    ${INVALID_PRODUCT_ID}    2    ${TOKEN}    400
+    Verificar mensagem retornada    message    Produto não encontrado
+
+TC07 - Cadastrar carrinho sem informar o token
+    Realizar o login e capturar o token   ${EMAIL_ADMIN}    ${PASSWORD_ADMIN}    200
+    ${PRODUCT_NAME}    Get Product Name
+    ${PRODUCT_PRICE}    Get Product Price
+    ${PRODUCT_DESCRIPTION}    Get Product Description
+    ${PRODUCT_QUANTITY}    Get Product Quantity
+
+    Cadastrar produto    ${PRODUCT_NAME}    ${PRODUCT_PRICE}    ${PRODUCT_DESCRIPTION}    ${PRODUCT_QUANTITY}    ${TOKEN}     201
+    Adicionar Produtos no Carrinho    ${PRODUCT_ID}    2    ${TOKEN_BLANK}    401
+    Verificar mensagem retornada    message    Token de acesso ausente, inválido, expirado ou usuário do token não existe mais
+
+TC08 - Listar carrinho com preço total inválido
+    Realizar o login e capturar o token   ${EMAIL_ADMIN}    ${PASSWORD_ADMIN}    200
+    Listar todos os produtos cadastrados    400    query_params=precoTotal=-1
+    Verificar mensagem retornada    precoTotal    precoTotal não é permitido
+
+TC09 - Listar carrinho com quantidade total inválido
+    Realizar o login e capturar o token   ${EMAIL_ADMIN}    ${PASSWORD_ADMIN}    200
+    Listar todos os produtos cadastrados    400    query_params=quantidadeTotal=-1
+    Verificar mensagem retornada    quantidadeTotal    quantidadeTotal não é permitido
+
+TC10 - Finalizar compra sem informar o token
+    Realizar o login e capturar o token   ${EMAIL_ADMIN}    ${PASSWORD_ADMIN}    200
+    Excluir carrinho ao concluir compra    ${TOKEN_BLANK}    401
+    Verificar mensagem retornada    message    Token de acesso ausente, inválido, expirado ou usuário do token não existe mais
+
+TC11 - Cancelar compra sem informar o token
+    Realizar o login e capturar o token   ${EMAIL_ADMIN}    ${PASSWORD_ADMIN}    200
+    ${PRODUCT_NAME}    Get Product Name
+    ${PRODUCT_PRICE}    Get Product Price
+    ${PRODUCT_DESCRIPTION}    Get Product Description
+    ${PRODUCT_QUANTITY}    Get Product Quantity
+
+    Cadastrar produto    ${PRODUCT_NAME}    ${PRODUCT_PRICE}    ${PRODUCT_DESCRIPTION}    ${PRODUCT_QUANTITY}    ${TOKEN}     201
+    Adicionar Produtos no Carrinho    ${PRODUCT_ID}    2    ${TOKEN}    201
+    Excluir carrinho ao cancelar compra    ${TOKEN_BLANK}    401
+    Verificar mensagem retornada    message    Token de acesso ausente, inválido, expirado ou usuário do token não existe mais  
+     Excluir carrinho ao cancelar compra    ${TOKEN}    200
+
+TC12 - Cadastrar carrinho em duplicidade
+    Realizar o login e capturar o token   ${EMAIL_ADMIN}    ${PASSWORD_ADMIN}    200
+    ${PRODUCT_NAME}    Get Product Name
+    ${PRODUCT_PRICE}    Get Product Price
+    ${PRODUCT_DESCRIPTION}    Get Product Description
+    ${PRODUCT_QUANTITY}    Get Product Quantity
+
+    Cadastrar produto    ${PRODUCT_NAME}    ${PRODUCT_PRICE}    ${PRODUCT_DESCRIPTION}    ${PRODUCT_QUANTITY}    ${TOKEN}     201
+    Adicionar Produtos no Carrinho    ${PRODUCT_ID}    2    ${TOKEN}    201
+    ${PRODUCT_NAME}    Get Product Name
+    ${PRODUCT_PRICE}    Get Product Price
+    ${PRODUCT_DESCRIPTION}    Get Product Description
+    ${PRODUCT_QUANTITY}    Get Product Quantity
+    Cadastrar produto    ${PRODUCT_NAME}    ${PRODUCT_PRICE}    ${PRODUCT_DESCRIPTION}    ${PRODUCT_QUANTITY}    ${TOKEN}     201
+    Adicionar Produtos no Carrinho    ${PRODUCT_ID}    2    ${TOKEN}    400
+    Verificar mensagem retornada    message    Não é permitido ter mais de 1 carrinho

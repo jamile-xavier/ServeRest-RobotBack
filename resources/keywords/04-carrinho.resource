@@ -25,7 +25,10 @@ Adicionar Produtos no Carrinho
     ...    expected_status=${expected_status_code}
 
     Set Test Variable    ${DATA}    ${response.json()}
-    Set Global Variable    ${CART_ID}    ${response.json()["_id"]}
+    IF    ${expected_status_code} == 201
+     Set Global Variable    ${CART_ID}    ${response.json()["_id"]}
+    END
+   
 
 Listar todos os carrinhos
     [Documentation]    Listar todos os carrinhos cadastrados
@@ -45,7 +48,7 @@ Listar todos os carrinhos
 
     ${response}=    GET On Session    alias=ServeRest    url=${final_url}    expected_status=${expected_status_code}    headers=${headers}
     Set Test Variable    ${DATA}    ${response.json()}
-
+    
 Verificar os dados retornados da consulta de carrinho
     [Documentation]    Verificar dados retornados ao pesquisar produtos
     Dictionary Should Contain Key    ${DATA}    quantidade
@@ -100,32 +103,26 @@ Verificar os dados retornados da consulta de carrinho por id
         Should Be True    ${produto["precoUnitario"]} > 0
     END
 
-# Editar preco do produto
-#     [Documentation]    Edição de preço do produto
-#     [Arguments]    ${name}    ${price_update}    ${description}    ${quantity}    ${token}    ${expected_status_code}      
-#     ${headers}    Create Dictionary    Authorization=${token}     
-#     ${body}    Create Dictionary
-#     ...    nome=${name}
-#     ...    preco=${price_update}
-#     ...    descricao=${description}
-#     ...    quantidade=${quantity}
-#     ${response}    PUT On Session    
-#     ...    alias=ServeRest
-#     ...    url=${PRODUCT}/${PRODUCT_ID}
-#     ...    headers=${headers}
-#     ...    json=${body}
-#     ...    expected_status=${expected_status_code}
+Excluir carrinho ao concluir compra
+    [Documentation]    Exclusão do carrinho ao concluir uma compra
+    [Arguments]    ${token}    ${expected_status_code}   
+    ${headers}    Create Dictionary    Authorization=${token}  
+    ${response}    DELETE On Session    
+    ...    alias=ServeRest    
+    ...    url=${CART}${CART_FINISH}    
+    ...    headers=${headers}
+    ...    expected_status=${expected_status_code}
 
-#     Set Test Variable    ${DATA}    ${response.json()}
+    Set Test Variable    ${DATA}    ${response.json()}
 
-# Excluir produto por id
-#     [Documentation]    Exclusão do produto pelo seu id
-#     [Arguments]    ${token}    ${expected_status_code}   
-#     ${headers}    Create Dictionary    Authorization=${token}  
-#     ${response}    DELETE On Session    
-#     ...    alias=ServeRest    
-#     ...    url=${PRODUCT}/${PRODUCT_ID}    
-#     ...    headers=${headers}
-#     ...    expected_status=${expected_status_code}
+Excluir carrinho ao cancelar compra
+    [Documentation]    Exclusão do carrinho ao concluir uma compra
+    [Arguments]    ${token}    ${expected_status_code}   
+    ${headers}    Create Dictionary    Authorization=${token}  
+    ${response}    DELETE On Session    
+    ...    alias=ServeRest    
+    ...    url=${CART}${CART_CANCEL}  
+    ...    headers=${headers}
+    ...    expected_status=${expected_status_code}
 
-#     Set Test Variable    ${DATA}    ${response.json()}
+    Set Test Variable    ${DATA}    ${response.json()}
